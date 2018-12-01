@@ -62,5 +62,14 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT).show();
             }
         });
+
+        Button deleteData = (Button) findViewById(R.id.delete_data);
+        deleteData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                db.delete("Book", "pages > ?", new String[]{"170"});
+            }
+        });
     }
 }
