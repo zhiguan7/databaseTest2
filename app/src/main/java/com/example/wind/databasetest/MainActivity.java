@@ -2,9 +2,11 @@ package com.example.wind.databasetest;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -18,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         dbHelper = new MyDatabaseHelper(this, "BookStore.db", null, 2);
-        Button createDatabase = (Button) findViewById(R.id.create_database);
+        final Button createDatabase = (Button) findViewById(R.id.create_database);
         createDatabase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,6 +71,30 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 SQLiteDatabase db = dbHelper.getWritableDatabase();
                 db.delete("Book", "pages > ?", new String[]{"170"});
+            }
+        });
+
+        final Button queryButton = (Button) findViewById(R.id.query_data);
+        queryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                Cursor cursor = db.query("Book", null, null, null, null, null,null);
+                if (cursor.moveToFirst()){
+                    do{
+                        String name = cursor.getString(cursor.getColumnIndex("name"));
+                        String author = cursor.getString(cursor.getColumnIndex("author"));
+                        int pages = cursor.getInt(cursor.getColumnIndex("pages"));
+                        double price = cursor.getDouble(cursor.getColumnIndex("price"));
+
+                        Log.d("MainActivity", "Book name is " + name);
+                        Log.d("MainActivity", "Book author is " + author);
+                        Log.d("MainActivity", "Book pages is " + pages);
+                        Log.d("MainActivity", "Book price is " + price);
+
+                    }while(cursor.moveToNext());
+                    cursor.close();
+                }
             }
         });
     }
